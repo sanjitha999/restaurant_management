@@ -1,104 +1,105 @@
-
 import 'dart:convert';
 
-import 'package:resturant_management/utils/string_utils.dart';
+import 'package:resturant_management/modules/dashboard/models/master_data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum PreferencesKeys {
-  kAuthToken(isPersistent: true);
+abstract class Preferences {
+  static const String kAuthToken = "kAuthToken";
+  static const String masterData = "masterData";
+  static const String loginData = "loginData";
 
-  const PreferencesKeys({required this.isPersistent});
-  final bool isPersistent;
-}
+  static const Set<String> _persistentKeys = {
+    kAuthToken,
+    masterData,
+    loginData,
+  };
 
-class AppSharedPreferences {
-  Future<SharedPreferences> _getPreferences() async {
-    final preferences = await SharedPreferences.getInstance();
-    return preferences;
-  }
-
-  Future<bool> setStringForKey(PreferencesKeys key, String value) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.setString(key.toString(), value);
-  }
-
-  Future<String?> getStringForKey(PreferencesKeys key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.getString(key.toString());
-  }
-
-  Future<bool> setBoolForKey(PreferencesKeys key, bool value) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.setBool(key.toString(), value);
-  }
-
-  Future<bool?> getBoolForKey(PreferencesKeys key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.getBool(key.toString());
-  }
-
-  Future<bool> setValueForCustomKey(String key, bool value) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.setBool(key, value);
-  }
-
-  Future<bool?> getValueForCustomKey(String key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.getBool(key);
-  }
-
-  Future<dynamic> getSecureObjectPreference(PreferencesKeys key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    final jsonString = preferences.getString(key.toString());
-    if (StringUtils.isNullOrEmpty(jsonString)) {
+  Future getObjectPreference(String key) async {
+    final preferences = await _getPreferences();
+    final String? jsonString = preferences.getString(key);
+    if (jsonString == null || jsonString.isEmpty) {
       return null;
     }
-    return jsonDecode(jsonString!);
+    return jsonDecode(jsonString);
   }
 
-  Future<void> setSecureObjectPreference(
-      PreferencesKeys key,
-      dynamic object,
-      ) async {
-    final SharedPreferences preferences = await _getPreferences();
-    await preferences.setString(key.toString(), jsonEncode(object));
+  Future<void> setObjectPreference(String key, dynamic object) async {
+    final preferences = await _getPreferences();
+    preferences.setString(key, jsonEncode(object));
   }
 
-  Future<bool> setIntForKey(PreferencesKeys key, int value) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.setInt(key.toString(), value);
-  }
-
-  Future<int?> getIntForKey(PreferencesKeys key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.getInt(key.toString());
-  }
-
-  Future<bool> setDoubleForKey(PreferencesKeys key, double value) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.setDouble(key.toString(), value);
-  }
-
-  Future<bool> isKeyAvailable(PreferencesKeys key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.containsKey(key.toString());
-  }
-
-  Future<double?> getDoubleForKey(PreferencesKeys key) async {
-    final SharedPreferences preferences = await _getPreferences();
-    return preferences.getDouble(key.toString());
-  }
-
-  Future<void> clearAllDataInPreference() async {
-    final SharedPreferences preferences = await _getPreferences();
-
-    final Set<String> persistentPrefs = {};
-    for (final PreferencesKeys key in PreferencesKeys.values) {
-      if (key.isPersistent) persistentPrefs.add(key.toString());
-    }
-
+  Future<void> clearData() async {
+    final preferences = await _getPreferences();
     for (final String key in preferences.getKeys()) {
-      if (!persistentPrefs.contains(key)) preferences.remove(key);
+      if (!_persistentKeys.contains(key)) {
+        await preferences.remove(key);
+      }
     }
+  }
+
+  Future<SharedPreferences> _getPreferences() async {
+    return SharedPreferences.getInstance();
+  }
+
+  Future<SharedPreferences> clear() async {
+    return SharedPreferences.getInstance();
+  }
+
+  Future<void> remove(String key) async {
+    final preferences = await _getPreferences();
+    preferences.remove(key);
+  }
+
+  /*================
+      Preferences
+   =================*/
+
+  Future<String?> getAuthToken();
+
+  Future<void> setAuthToken(String token);
+
+  // Future<String?> getMasterDataModel();
+  Future<MasterDataModel?> getMasterDataModel();
+
+  Future<void> setMasterDataModel(MasterDataModel masterData);
+
+  Future<void> setLoginData(String? data);
+
+  Future<String?> getLoginData();
+}
+
+class AppPreferenceImpl extends Preferences {
+  @override
+  Future<String?> getAuthToken() async {
+    return await getObjectPreference(Preferences.kAuthToken) as String?;
+  }
+
+  @override
+  Future<MasterDataModel?> getMasterDataModel() async {
+    var content = (await getObjectPreference(Preferences.masterData));
+    if (content == null) {
+      return null;
+    }
+    return MasterDataModel.fromJson(content as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> setAuthToken(String token) async {
+    await setObjectPreference(Preferences.kAuthToken, token);
+  }
+
+  @override
+  Future<void> setMasterDataModel(MasterDataModel masterData) async {
+    await setObjectPreference(Preferences.masterData, masterData);
+  }
+
+  @override
+  Future<void> setLoginData(String? data) async {
+    await setObjectPreference(Preferences.loginData, data);
+  }
+
+  @override
+  Future<String?> getLoginData() async {
+    return await getObjectPreference(Preferences.loginData);
   }
 }

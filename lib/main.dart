@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:resturant_management/auth/auth_manager.dart';
 import 'package:resturant_management/di/di_initializer.dart';
+import 'package:resturant_management/generated/l10n.dart';
 import 'package:resturant_management/navigation/route_initializer.dart';
 import 'package:resturant_management/navigation/routes.dart';
 import 'package:resturant_management/theme/app_theme.dart';
@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       key: AppGlobalKeys.navigatorKey,
+      localizationsDelegates: const [
+        Strings.delegate,
+      ],
       theme: AppTheme.lightTheme,
       onGenerateRoute: (settings) => onGenerateRoute(settings),
       initialRoute: Routes.splashRoute,

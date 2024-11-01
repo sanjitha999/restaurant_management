@@ -17,9 +17,15 @@ class LoginResponseModel {
 
 @JsonSerializable()
 class LoginResponseData {
-  final String token;
+  final String? token;
+  final String? code;
+  final String? message;
 
-  LoginResponseData({required this.token});
+  LoginResponseData({
+    this.token,
+    this.code,
+    this.message,
+  });
 
   factory LoginResponseData.fromJson(Map<String, dynamic> json) =>
       _$LoginResponseDataFromJson(json);

@@ -3,6 +3,7 @@ import 'package:resturant_management/modules/login/webservice/login_request.dart
 
 abstract class LoginRepository {
   Future<void> initiateLogin({required LoginRequestModel loginModel});
+  Future<void> refreshToken({required String loginBody});
 }
 
 class LoginRepoImpl extends LoginRepository {
@@ -11,5 +12,10 @@ class LoginRepoImpl extends LoginRepository {
   @override
   Future<void> initiateLogin({required LoginRequestModel loginModel}) {
     return _loginRequest.initiateLogin(loginModel: loginModel);
+  }
+
+  @override
+  Future<void> refreshToken({required String loginBody}) {
+    return _loginRequest.refreshToken(loginBody: loginBody);
   }
 }

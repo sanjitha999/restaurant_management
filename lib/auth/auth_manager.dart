@@ -1,10 +1,25 @@
+import 'package:flutter/foundation.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:resturant_management/di/di_initializer.dart';
+import 'package:resturant_management/modules/login/webservice/login_repository.dart';
 import 'package:resturant_management/storage/app_shared_preferences.dart';
 import 'package:resturant_management/utils/string_utils.dart';
 
 class AuthManager {
+  static final AuthManager _instance = AuthManager._internal();
+
+  factory AuthManager() {
+    return _instance;
+  }
+
+  final LoginRepository _repository = AppDI.inject<LoginRepository>();
+
+  AuthManager._internal();
+
+  final Preferences prefs = AppDI.inject<Preferences>();
+
   Future<String?> getAuthToken() async {
-    String? prevAuthToken = await AppSharedPreferences()
-        .getStringForKey(PreferencesKeys.kAuthToken);
+    String? prevAuthToken = await prefs.getAuthToken();
     return prevAuthToken;
   }
 
@@ -13,9 +28,26 @@ class AuthManager {
   }
 
   Future<bool> isAuthenticated() async {
-    String? prevAuthToken = await AppSharedPreferences()
-        .getStringForKey(PreferencesKeys.kAuthToken);
-    print("prevAUthToken $prevAuthToken");
-    return StringUtils.isNullOrEmpty(prevAuthToken);
+    String? prevAuthToken = await prefs.getAuthToken();
+    if (prevAuthToken == null) return false;
+    if (_isTokenExpired(prevAuthToken ?? '')) {
+      String? loginData = await prefs.getLoginData();
+      if (kDebugMode) {
+        print("loginData $loginData");
+      }
+      if (loginData == null) return false;
+      await _repository.refreshToken(loginBody: loginData);
+      prevAuthToken = await prefs.getAuthToken();
+    }
+    if (kDebugMode) {
+      print("prevAUthToken $prevAuthToken");
+    }
+    return !StringUtils.isNullOrEmpty(prevAuthToken);
+  }
+
+  bool _isTokenExpired(String token) {
+    // Check if the token is expired
+    bool isTokenExpired = JwtDecoder.isExpired(token);
+    return isTokenExpired;
   }
 }

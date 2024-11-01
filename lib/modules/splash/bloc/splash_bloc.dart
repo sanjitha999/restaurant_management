@@ -9,8 +9,8 @@ part 'splash_event.dart';
 part 'splash_state.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
+
   SplashBloc() : super(SplashInitial()) {
-    print("MyTest :: hrere");
     on<FetchInitialData>(_fetchInitialData);
   }
 
@@ -19,11 +19,14 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     Emitter<SplashState> emit,
   ) async {
     bool isAuthenticated = await AuthManager().isAuthenticated();
+    await Future.delayed(const Duration(seconds: 5));
+    // "LoginRequest": {
+    //         "username": "rvay@vaylabs.com",
+    //         "password": "Rvay@54321"
+    //     }
     if (isAuthenticated) {
       await _checkAndEmitState(emit);
     } else {
-      // take to login
-      await Future.delayed(Duration(seconds: 2));
       emit(LoginState());
     }
   }

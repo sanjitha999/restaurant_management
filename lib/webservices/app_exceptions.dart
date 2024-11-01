@@ -20,6 +20,8 @@ class AppException implements Exception {
   static AppException forResponse(Response response) {
     final int statusCode = response.statusCode;
     switch (statusCode) {
+      case 400:
+        return UnAuthorizedException(response);
       case 304:
         return ConfigNotModifiedException(response);
 
@@ -49,10 +51,14 @@ class FileNotFoundException extends AppException {
   FileNotFoundException(super.response);
 }
 
+class UnAuthorizedException extends AppException {
+  UnAuthorizedException(super.response);
+}
+
 class DisplayMessageException extends AppException {
   DisplayMessageException(Response response) : super(response) {
     ErrorModel responseStatus =
-        ErrorModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    ErrorModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
     errorCode = responseStatus.error?.errorCode;
 
     String? errorType = responseStatus.error?.type;
@@ -68,6 +74,6 @@ class DisplayMessageException extends AppException {
 class InternalServerException extends AppException {
   InternalServerException(Response response) : super(response) {
     displayMessage =
-        'We ran into an unexpected error. We’re trying to resolve it. Please retry after sometime.';
+    'We ran into an unexpected error. We’re trying to resolve it. Please retry after sometime.';
   }
 }

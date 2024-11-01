@@ -49,6 +49,10 @@ extension StringExtension on String {
     return name;
   }
 
+  bool isNotNull(String? other) {
+    return other!=null;
+  }
+
   bool isGreater(String other) {
     return compareTo(other) == 1;
   }

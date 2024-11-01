@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:resturant_management/auth/auth_manager.dart';
 import 'package:resturant_management/session/session_manager.dart';
+import 'package:resturant_management/webservices/app_exceptions.dart';
 import 'package:resturant_management/webservices/base_request/constants.dart';
 import 'package:resturant_management/webservices/endpoints/endpoints.dart';
 
@@ -41,9 +43,11 @@ mixin WebserviceUtils {
       additionalHeaders: additionalHeaders,
     );
     if (request.headers == null) return null;
+    final http.Response? response = await executeRequest(request, additionalHeaders: additionalHeaders);
 
-    return executeRequest(request, additionalHeaders: additionalHeaders);
+    print("HttpResponse :: ${response?.body}");
 
+    return response;
   }
 
   Future<BaseRequest> constructRequest({
@@ -56,7 +60,7 @@ mixin WebserviceUtils {
   }) async {
     return BaseRequest(
       authenticated: authenticated,
-      url: Uri.https(_getBaseUrl(), endpoint, queryParams),
+      url: Uri.http(_getBaseUrl(), endpoint, queryParams),
       method: method,
       headers: await getRequestHeaders(
         authenticated: authenticated,
@@ -67,9 +71,9 @@ mixin WebserviceUtils {
   }
 
   Future<http.Response?> executeRequest(
-      BaseRequest request, {
-        Map<String, String>? additionalHeaders,
-      }) async {
+    BaseRequest request, {
+    Map<String, String>? additionalHeaders,
+  }) async {
     http.Response? response;
     switch (request.method) {
       case HttpMethod.get:
@@ -105,23 +109,52 @@ mixin WebserviceUtils {
       default:
         break;
     }
+    if (kDebugMode) {
+      print("HttpResponse :: status ${response?.statusCode}");
+    }
 
-    if (response?.statusCode == 401 && request.retryCount <= 0) {
-      final String? accessToken = await AuthManager().refreshAuthToken();
-      if (accessToken == null) {
-        await SessionManager().initiateLogout();
-        return null;
-      } else {
-        request.headers = await getRequestHeaders(
-          authenticated: request.authenticated ?? false,
-          additionalHeaders: additionalHeaders,
-        );
-        request.retryCount++;
-        return executeRequest(request, additionalHeaders: additionalHeaders,);
+    if ((response?.statusCode == 401 || response?.statusCode == 400) &&
+        request.retryCount <= 0) {
+      if (kDebugMode) {
+        print("HttpResponse :: here token expired");
       }
+      // final String? accessToken = await AuthManager().refreshAuthToken();
+      // if (accessToken == null) {
+      await SessionManager().initiateLogout();
+      throw UnAuthorizedException(response!);
+      return null;
+      // } else {
+      //   request.headers = await getRequestHeaders(
+      //     authenticated: request.authenticated ?? false,
+      //     additionalHeaders: additionalHeaders,
+      //   );
+      //   request.retryCount++;
+      //   return executeRequest(
+      //     request,
+      //     additionalHeaders: additionalHeaders,
+      //   );
+      // }
     } else {
       return response;
     }
+  }
+
+  Future<http.MultipartRequest> constructMultipartRequest({
+    required HttpMethod method,
+    required String endpoint,
+    Map<String, String> fields = const {},
+    Map<String, String>? queryParams,
+    List<http.MultipartFile> files = const [],
+    bool? authenticated,
+  }) async {
+    final http.MultipartRequest request = http.MultipartRequest(
+      method.name,
+      Uri.http(_getBaseUrl(), endpoint, queryParams),
+    );
+    request.headers.addAll(await getRequestHeaders(authenticated: authenticated) ?? {});
+    request.fields.addAll(fields);
+    request.files.addAll(files);
+    return request;
   }
 
   Future<Map<String, String>?> getRequestHeaders({
@@ -129,8 +162,10 @@ mixin WebserviceUtils {
     String contentType = Header.contentTypeJson,
     Map<String, String>? additionalHeaders,
   }) async {
+    String? accessToken;
     if (authenticated ?? false) {
-      final accessToken = await getAccessToken();
+      final String? token = await getAccessToken();
+      accessToken = 'Bearer $token';
       if (accessToken == null) {
         await SessionManager().initiateLogout();
         return null;
@@ -138,11 +173,10 @@ mixin WebserviceUtils {
     }
 
     final Map<String, String> defaultHeaders = {
-      if (authenticated ?? false)
-        Header.authorization: (await getAccessToken()) ?? "",
+      if (authenticated ?? false) Header.authorization: accessToken ?? '',
       Header.contentType: Header.contentTypeJson,
     };
-    // if (null != additionalHeaders) defaultHeaders.addAll(additionalHeaders);
+    if (null != additionalHeaders) defaultHeaders.addAll(additionalHeaders);
     return defaultHeaders;
   }
 
@@ -151,6 +185,6 @@ mixin WebserviceUtils {
   }
 
   String _getBaseUrl() {
-    return Uri.parse(EndPoints.baseUrl).host;
+    return EndPoints.baseUrl;
   }
 }
