@@ -12,3 +12,15 @@ class DataFetchedState extends BusinessOverviewState {
 
   DataFetchedState({required this.infos});
 }
+
+class RequestSuccessful extends BusinessOverviewState {
+  final String message;
+
+  RequestSuccessful({required this.message});
+}
+
+class RequestFailed extends BusinessOverviewState {
+  final String message;
+
+  RequestFailed({required this.message});
+}

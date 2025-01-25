@@ -49,7 +49,6 @@ class LoginRequest with WebserviceUtils {
   }
 
   Future<void> refreshToken({required String loginBody}) async {
-    print("JsonBody $loginBody");
     try {
       final http.Response? response = await constructAndExecuteRequest(
         endpoint: EndPoints.login,

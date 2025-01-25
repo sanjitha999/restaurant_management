@@ -17,4 +17,5 @@ class AppColors {
   static const Color textGrey = Color(0xffd4d9de);
   static const Color white = Color(0xFFFFFFFF); // White
   static const Color successGreen = Color(0xFF00b300); // White
+  static const Color primaryText = Color(0xFF333333);
 }

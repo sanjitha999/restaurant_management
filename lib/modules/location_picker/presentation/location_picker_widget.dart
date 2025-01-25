@@ -40,29 +40,27 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Flexible(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop(_pinnedLocation);
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.accent,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(18),
-                    ),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop(_pinnedLocation);
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: AppColors.accent,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(18),
                   ),
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      Strings.of(context).confirmLocation,
-                      style: const TextStyle(
-                        color: AppColors.surface,
-                        fontWeight: FontWeight.bold,
-                        fontSize: FontSize.large,
-                      ),
+                ),
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    Strings.of(context).confirmLocation,
+                    style: const TextStyle(
+                      color: AppColors.surface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: FontSize.large,
                     ),
                   ),
                 ),

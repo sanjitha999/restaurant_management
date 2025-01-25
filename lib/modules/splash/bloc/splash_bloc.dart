@@ -24,6 +24,10 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     //         "username": "rvay@vaylabs.com",
     //         "password": "Rvay@54321"
     //     }
+
+    // Admin
+    // UserName: Deeksha@admin
+    // password: Admin@123
     if (isAuthenticated) {
       await _checkAndEmitState(emit);
     } else {

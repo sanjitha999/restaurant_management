@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_management/custom_widgets/primary_button.dart';
 import 'package:resturant_management/generated/l10n.dart';
+import 'package:resturant_management/modules/business_overview/model/business_screen_args_model.dart';
 import 'package:resturant_management/modules/first_level_check/bloc/first_level_check_bloc.dart';
 import 'package:resturant_management/modules/first_level_check/presentation/facilities_widget.dart';
 import 'package:resturant_management/navigation/routes.dart';
@@ -57,7 +58,10 @@ class FirstLevelCheckRoute extends StatelessWidget {
         if (state is FirstLevelApprovalSubmitState) {
           Navigator.of(context).pushReplacementNamed(
             Routes.businessOverviewRoute,
-            arguments: state.businessId,
+            arguments: BusinessScreenArgsModel(
+              businessId: state.businessId,
+              isPending: false,
+            ),
           );
         }
       },

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:resturant_management/di/di_initializer.dart';
 import 'package:resturant_management/modules/dashboard/models/master_data_model.dart';
 import 'package:resturant_management/navigation/routes.dart';
@@ -40,7 +41,7 @@ class SessionManager {
         (route) => false,
       );
     } else {
-      print("Navigator is still not available.");
+     debugPrint("Navigator is still not available.");
     }
   }
 }

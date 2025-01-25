@@ -1,29 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:resturant_management/auth/auth_manager.dart';
+import 'package:resturant_management/modules/auth/bloc/auth_bloc.dart';
 import 'package:resturant_management/session/session_manager.dart';
 import 'package:resturant_management/webservices/app_exceptions.dart';
 import 'package:resturant_management/webservices/base_request/constants.dart';
 import 'package:resturant_management/webservices/endpoints/endpoints.dart';
 
 enum HttpMethod { get, post, put, delete }
-
-class BaseRequest {
-  bool? authenticated;
-  late Uri url;
-  HttpMethod? method;
-  dynamic body;
-  Map<String, String>? headers;
-  int retryCount = 0;
-
-  BaseRequest({
-    this.authenticated,
-    required this.url,
-    required this.method,
-    this.body,
-    this.headers,
-  });
-}
 
 mixin WebserviceUtils {
   Future<http.Response?> constructAndExecuteRequest({
@@ -44,8 +31,6 @@ mixin WebserviceUtils {
     );
     if (request.headers == null) return null;
     final http.Response? response = await executeRequest(request, additionalHeaders: additionalHeaders);
-
-    print("HttpResponse :: ${response?.body}");
 
     return response;
   }
@@ -110,13 +95,20 @@ mixin WebserviceUtils {
         break;
     }
     if (kDebugMode) {
-      print("HttpResponse :: status ${response?.statusCode}");
+      debugPrint('http/request: ${DateTime.now().toString()}\n${request.url}\n${request.headers}\n${request.body}', wrapWidth: 1024);
+      debugPrint('http/response: ${response?.statusCode}\n${request.url}\n${response?.headers}\n${response?.body}', wrapWidth: 1024);
+      debugPrint("HttpResponse :: status ${response?.statusCode}");
     }
+    // var responseMap = jsonDecode(response?.body ?? '');
+    // if ((response?.statusCode == 400) &&
+    //     responseMap['message'] == "Invalid JWT Token supplied") {
+    //   AuthBloc().add(AuthLogoutEvent());
+    // }
 
-    if ((response?.statusCode == 401 || response?.statusCode == 400) &&
+    if ((response?.statusCode == 401) &&
         request.retryCount <= 0) {
       if (kDebugMode) {
-        print("HttpResponse :: here token expired");
+       debugPrint("HttpResponse :: here token expired");
       }
       // final String? accessToken = await AuthManager().refreshAuthToken();
       // if (accessToken == null) {
@@ -154,6 +146,9 @@ mixin WebserviceUtils {
     request.headers.addAll(await getRequestHeaders(authenticated: authenticated) ?? {});
     request.fields.addAll(fields);
     request.files.addAll(files);
+    if (kDebugMode) {
+      debugPrint('http/request: ${DateTime.now().toString()}\n${request.url}\n${request.headers}\n${request.files}', wrapWidth: 1024);
+    }
     return request;
   }
 
@@ -187,4 +182,21 @@ mixin WebserviceUtils {
   String _getBaseUrl() {
     return EndPoints.baseUrl;
   }
+}
+
+class BaseRequest {
+  bool? authenticated;
+  late Uri url;
+  HttpMethod? method;
+  dynamic body;
+  Map<String, String>? headers;
+  int retryCount = 0;
+
+  BaseRequest({
+    this.authenticated,
+    required this.url,
+    required this.method,
+    this.body,
+    this.headers,
+  });
 }

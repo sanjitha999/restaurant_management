@@ -21,9 +21,6 @@ class DashboardRoute extends StatelessWidget {
       builder: (context, state) {
         if (state is DashboardContentState) {
           return Scaffold(
-            appBar: AppBar(
-              leading: const SizedBox(),
-            ),
             body: getBodyBasedOnSelectedNav(
               bottomNavItems: state.bottomNavItems,
               pages: state.pages,

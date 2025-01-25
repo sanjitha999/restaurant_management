@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -83,7 +84,7 @@ class RestaurantOnboardingBloc
         return null;
       }
     } catch (e) {
-      print(e);
+     debugPrint(e.toString());
       return null;
     }
   }
@@ -170,7 +171,7 @@ class RestaurantOnboardingBloc
         restaurantResponse: restaurantResponse,
       ));
     } catch (e) {
-      print("Error updating restaurant $e");
+     debugPrint("Error updating restaurant $e");
     }
   }
 }

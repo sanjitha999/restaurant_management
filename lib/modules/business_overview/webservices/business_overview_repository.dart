@@ -3,21 +3,37 @@ import 'dart:convert';
 import 'package:resturant_management/modules/business_overview/webservices/business_overview_request.dart';
 
 abstract class BusinessOverviewRepository {
-  Future<Map<String,dynamic>?> getBusinessOverview({required String businessId});
+  Future<Map<String, dynamic>?> getBusinessOverview(
+      {required String businessId});
+
+  Future<void> approveRestaurant({required String businessId});
+
+  Future<void> rejectRestaurant({required String businessId});
 }
 
 class BusinessOverviewRepoImpl implements BusinessOverviewRepository {
   final BusinessOverviewRequest _request = BusinessOverviewRequest();
 
   @override
-  Future<Map<String,dynamic>?> getBusinessOverview({required String businessId}) {
+  Future<Map<String, dynamic>?> getBusinessOverview(
+      {required String businessId}) {
     return _request.getBusinessDetails(businessId: businessId);
+  }
+
+  @override
+  Future<void> approveRestaurant({required String businessId}) {
+    return _request.approveRestaurant(businessId: businessId);
+  }
+
+  @override
+  Future<void> rejectRestaurant({required String businessId}) {
+    return _request.rejectRestaurant(businessId: businessId);
   }
 }
 
 class BusinessOverviewMock implements BusinessOverviewRepository {
   @override
-  Future<Map<String,dynamic>?> getBusinessOverview(
+  Future<Map<String, dynamic>?> getBusinessOverview(
       {required String businessId}) async {
     const String businessResponseJson = '''
 {
@@ -100,4 +116,10 @@ class BusinessOverviewMock implements BusinessOverviewRepository {
         jsonDecode(businessResponseJson);
     return businessResponseMap;
   }
+
+  @override
+  Future<void> approveRestaurant({required String businessId}) async {}
+
+  @override
+  Future<void> rejectRestaurant({required String businessId}) async {}
 }

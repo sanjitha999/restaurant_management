@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:resturant_management/modules/dashboard/models/master_data_model.dart';
 import 'package:resturant_management/modules/first_level_check/model/first_level_request_model.dart';
@@ -63,7 +64,6 @@ class FirstLevelCheckBloc
     _cleanlinessList += firstLevelCheck?.feedbackPoints ?? [];
     _ambianceList += firstLevelCheck?.feedbackPoints ?? [];
 
-    print("MyTest :: firstCheck $firstLevelCheck");
     emit(
       ContentState(
         kitchenHygiene: _getBoolFromText(_kitchenHygiene),
@@ -206,7 +206,7 @@ class FirstLevelCheckBloc
 
       emit(FirstLevelApprovalSubmitState(businessId: businessId));
     } catch (e) {
-      print("Exception submitting amenities $e");
+     debugPrint("Exception submitting amenities $e");
     }
   }
 }

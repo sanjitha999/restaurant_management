@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:resturant_management/modules/business_overview/model/business_data_model.dart';
 import 'package:resturant_management/modules/business_overview/model/business_info_item_model.dart';
@@ -19,6 +20,8 @@ class BusinessOverviewBloc
   BusinessOverviewBloc({required this.repository, required this.businessId})
       : super(BusinessOverviewInitial()) {
     on<FetchBusinessOverviewEvent>(_fetchBusinessOverview);
+    on<ApproveBusinessEvent>(_approveBusiness);
+    on<RejectBusinessEvent>(_rejectBusiness);
   }
 
   Future<void> _fetchBusinessOverview(
@@ -33,7 +36,6 @@ class BusinessOverviewBloc
       if (businessData != null) {
         final BusinessDataModel businessDataModel = BusinessDataModel.fromJson(
             businessData['BusinessResponse']['business']);
-        print("businessData ${businessDataModel.toJson()}");
         List<BusinessInfoItemModel> restaurantItems = [
           BusinessInfoItemModel(
             title: "ID",
@@ -150,10 +152,9 @@ class BusinessOverviewBloc
         ];
         emit(DataFetchedState(infos: businessInfoList));
       } else {
-        print("businessData is null");
       }
     } catch (e) {
-      print("Error $e");
+     debugPrint("Error $e");
     }
   }
 
@@ -189,5 +190,31 @@ class BusinessOverviewBloc
     }
 
     return certificateItems;
+  }
+
+  Future<void> _approveBusiness(
+    ApproveBusinessEvent event,
+    Emitter<BusinessOverviewState> emit,
+  ) async {
+    try {
+      await repository.approveRestaurant(businessId: businessId);
+      emit(RequestSuccessful(message: 'Restaurant Approved Successfully'));
+    } catch (e) {
+      emit(RequestFailed(message: 'Request Failed, try again later'));
+     debugPrint("Exception $e");
+    }
+  }
+
+  Future<void> _rejectBusiness(
+    RejectBusinessEvent event,
+    Emitter<BusinessOverviewState> emit,
+  ) async {
+    try {
+      await repository.rejectRestaurant(businessId: businessId);
+      emit(RequestSuccessful(message: 'Restaurant Reject Successfully'));
+    } catch (e) {
+      emit(RequestFailed(message: 'Request Failed, try again later'));
+     debugPrint("Exception $e");
+    }
   }
 }

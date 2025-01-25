@@ -30,24 +30,51 @@ class AuthManager {
   Future<bool> isAuthenticated() async {
     String? prevAuthToken = await prefs.getAuthToken();
     if (prevAuthToken == null) return false;
-    if (_isTokenExpired(prevAuthToken ?? '')) {
-      String? loginData = await prefs.getLoginData();
-      if (kDebugMode) {
-        print("loginData $loginData");
-      }
-      if (loginData == null) return false;
-      await _repository.refreshToken(loginBody: loginData);
-      prevAuthToken = await prefs.getAuthToken();
+    const autoLogin = String.fromEnvironment('AUTO_LOGIN', defaultValue: 'default_value');
+    if (autoLogin == 'true') {
+      return await _autoLogin(prevAuthToken);
+    } else {
+      return !_isTokenExpired(prevAuthToken);
     }
-    if (kDebugMode) {
-      print("prevAUthToken $prevAuthToken");
-    }
-    return !StringUtils.isNullOrEmpty(prevAuthToken);
+    // if (_isTokenExpired(prevAuthToken)) {
+    //   return false;
+    // } else {
+    //   return true;
+    // }
+    // if (_isTokenExpired(prevAuthToken ?? '')) {
+    //   String? loginData = await prefs.getLoginData();
+    //   if (kDebugMode) {
+    //    debugPrint("loginData $loginData");
+    //   }
+    //   if (loginData == null) return false;
+    //   await _repository.refreshToken(loginBody: loginData);
+    //   prevAuthToken = await prefs.getAuthToken();
+    // }
+    // if (kDebugMode) {
+    //  debugPrint("prevAUthToken $prevAuthToken");
+    // }
+    // return !StringUtils.isNullOrEmpty(prevAuthToken);
   }
 
   bool _isTokenExpired(String token) {
     // Check if the token is expired
     bool isTokenExpired = JwtDecoder.isExpired(token);
     return isTokenExpired;
+  }
+
+  Future<bool> _autoLogin(String? prevAuthToken) async {
+    if (_isTokenExpired(prevAuthToken ?? '')) {
+      String? loginData = await prefs.getLoginData();
+      if (kDebugMode) {
+       debugPrint("loginData $loginData");
+      }
+      if (loginData == null) return false;
+      await _repository.refreshToken(loginBody: loginData);
+      prevAuthToken = await prefs.getAuthToken();
+    }
+    if (kDebugMode) {
+     debugPrint("prevAUthToken $prevAuthToken");
+    }
+    return !StringUtils.isNullOrEmpty(prevAuthToken);
   }
 }

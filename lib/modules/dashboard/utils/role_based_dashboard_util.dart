@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:resturant_management/di/di_initializer.dart';
+import 'package:resturant_management/modules/admins_list_screen/bloc/admins_list_bloc.dart';
+import 'package:resturant_management/modules/admins_list_screen/presentation/admin_list_screen.dart';
+import 'package:resturant_management/modules/admins_list_screen/webservice/admin_list_repository.dart';
+import 'package:resturant_management/modules/resturant_list_screen/bloc/restaurant_list_bloc.dart';
 import 'package:resturant_management/modules/resturant_list_screen/presentation/restaurant_list_screen.dart';
+import 'package:resturant_management/modules/resturant_list_screen/webservice/restaurant_list_repository.dart';
 import 'package:resturant_management/utils/user_role_extension.dart';
 
 mixin RoleBasedDashboardUtil {
@@ -9,13 +16,30 @@ mixin RoleBasedDashboardUtil {
     switch (userRole) {
       case UserRole.SUPERUSER:
         pages = [
-          const RestaurantListScreen(),
-          const Center(child: Text('Admin List')),
+          BlocProvider(
+            create: (context) => RestaurantListBloc(
+              repository: AppDI.inject<RestaurantListRepository>(),
+            )..add(FetchBusinessData()),
+            child: const RestaurantListScreen(),
+          ),
+          BlocProvider(
+            create: (context) =>
+                AdminsListBloc(repository: AppDI.inject<AdminListRepository>())
+                  ..add(
+                    FetchAdminListEvent(),
+                  ),
+            child: const AdminListScreen(),
+          ),
           const Center(child: Text('Profile')),
         ];
       case UserRole.ADMIN:
         pages = [
-          const Center(child: Text('Restaurant List')),
+          BlocProvider(
+            create: (context) => RestaurantListBloc(
+              repository: AppDI.inject<RestaurantListRepository>(),
+            )..add(FetchBusinessData()),
+            child: const RestaurantListScreen(),
+          ),
           const Center(child: Text('Profile')),
         ];
       case UserRole.RESTAURANT_MANAGER:
@@ -90,6 +114,26 @@ mixin RoleBasedDashboardUtil {
       case UserRole.CUSTOMER:
       // TODO: Handle this case.
     }
+    return bottomNavItems;
+  }
+
+  List<BottomNavigationBarItem> getRestaurantNavItems() {
+    List<BottomNavigationBarItem> bottomNavItems = [];
+    bottomNavItems = const [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.restaurant_menu),
+        label: 'Menu',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.people_alt_outlined),
+        label: 'Operators',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.contact_page),
+        label: 'Profile',
+      ),
+    ];
+
     return bottomNavItems;
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:resturant_management/di/di_initializer.dart';
 import 'package:resturant_management/modules/dashboard/models/master_data_model.dart';
@@ -38,7 +39,6 @@ class LicenseUploadBloc extends Bloc<LicenseUploadEvent, LicenseUploadState> {
   ) async {
     final MasterDataModel? masterData = await _prefs.getMasterDataModel();
     List<LicenseCertificates>? licenses = masterData?.filesRequiredByBusiness;
-    print('license name : ${licenses?[0].name}');
     if (licenses == null || licenses.isEmpty) {
       emit(NoLicensesState());
     } else {
@@ -66,7 +66,7 @@ class LicenseUploadBloc extends Bloc<LicenseUploadEvent, LicenseUploadState> {
       );
       emit(LicenseSubmittedState(businessId: businessId));
     } catch (e) {
-      print("MyTEst :: couldn't upload $e");
+     debugPrint("MyTEst :: couldn't upload $e");
     }
   }
 
@@ -87,7 +87,7 @@ class LicenseUploadBloc extends Bloc<LicenseUploadEvent, LicenseUploadState> {
         // User canceled the picker
       }
     } catch (e) {
-      print("Exception uploading file $e");
+     debugPrint("Exception uploading file $e");
     }
   }
 
@@ -96,6 +96,5 @@ class LicenseUploadBloc extends Bloc<LicenseUploadEvent, LicenseUploadState> {
     Emitter<LicenseUploadState> emit,
   ) {
     _licenseList[event.index].certificateId = event.text;
-    print("MyTest :: license id ${event.text}");
   }
 }

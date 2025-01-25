@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resturant_management/theme/spacing.dart';
 
 import 'app_colors.dart'; // Import your colors class
 
@@ -54,6 +55,18 @@ class AppTheme {
       hintStyle: TextStyle(
         color: AppColors.textGrey,
       ),
+    ),
+    tabBarTheme: TabBarTheme(
+      labelColor: AppColors.accent,
+      unselectedLabelColor: AppColors.white,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicatorColor: AppColors.accent,
+      dividerColor: AppColors.primaryLight,
+      // dividerHeight: 0,
+      // indicator: BoxDecoration(
+      //   color: AppColors.primaryLight, // Background color for the selected tab
+      //   borderRadius: BorderRadius.circular(Dimensions.radius20),
+      // ),
     ),
     // buttonTheme: const ButtonThemeData(
     //   buttonColor: AppColors.primary, // Yellow button color

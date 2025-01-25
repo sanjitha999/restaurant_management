@@ -259,6 +259,236 @@ class Strings {
       args: [],
     );
   }
+
+  /// `Fill in the menu details`
+  String get fillInTheMenuDetails {
+    return Intl.message(
+      'Fill in the menu details',
+      name: 'fillInTheMenuDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu Item Name`
+  String get menuItemName {
+    return Intl.message(
+      'Menu Item Name',
+      name: 'menuItemName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get description {
+    return Intl.message(
+      'Description',
+      name: 'description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ingredients`
+  String get ingredients {
+    return Intl.message(
+      'Ingredients',
+      name: 'ingredients',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu Type`
+  String get menuType {
+    return Intl.message(
+      'Menu Type',
+      name: 'menuType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category`
+  String get category {
+    return Intl.message(
+      'Category',
+      name: 'category',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subcategory`
+  String get subcategory {
+    return Intl.message(
+      'Subcategory',
+      name: 'subcategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quantity`
+  String get quantity {
+    return Intl.message(
+      'Quantity',
+      name: 'quantity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price`
+  String get price {
+    return Intl.message(
+      'Price',
+      name: 'price',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item type`
+  String get itemType {
+    return Intl.message(
+      'Item type',
+      name: 'itemType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Name`
+  String get userName {
+    return Intl.message(
+      'User Name',
+      name: 'userName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password`
+  String get password {
+    return Intl.message(
+      'Password',
+      name: 'password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First Name`
+  String get firstName {
+    return Intl.message(
+      'First Name',
+      name: 'firstName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last Name`
+  String get lastName {
+    return Intl.message(
+      'Last Name',
+      name: 'lastName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mobile Number`
+  String get mobileNumber {
+    return Intl.message(
+      'Mobile Number',
+      name: 'mobileNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gender`
+  String get gender {
+    return Intl.message(
+      'Gender',
+      name: 'gender',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date of Birth`
+  String get dateOfBirth {
+    return Intl.message(
+      'Date of Birth',
+      name: 'dateOfBirth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get adminName {
+    return Intl.message(
+      'Name',
+      name: 'adminName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date of birth is required`
+  String get dateOfBirthRequired {
+    return Intl.message(
+      'Date of birth is required',
+      name: 'dateOfBirthRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid date in dd/mm/yy format`
+  String get invalidDateOfBirth {
+    return Intl.message(
+      'Enter a valid date in dd/mm/yy format',
+      name: 'invalidDateOfBirth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Role`
+  String get role {
+    return Intl.message(
+      'Role',
+      name: 'role',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Role`
+  String get selectRole {
+    return Intl.message(
+      'Select Role',
+      name: 'selectRole',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a role`
+  String get roleRequired {
+    return Intl.message(
+      'Please select a role',
+      name: 'roleRequired',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<Strings> {

@@ -174,7 +174,6 @@ class _LoginCardWidgetState extends State<LoginCardWidget> {
             isDisabled: false,
             isLoading: false,
             onPressed: () {
-              print("MyTEst :: button pressed");
               BlocProvider.of<LoginBloc>(context).add(
                 SubmitCredentials(
                   userName: _usernameController.text,

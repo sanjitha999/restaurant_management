@@ -45,7 +45,6 @@ class _RestaurantInfoFormState extends State<RestaurantInfoForm> {
           _districtController.text = state.addressModel?.district ?? '';
           _stateController.text = state.addressModel?.state ?? '';
           _pincodeController.text = state.addressModel?.pincode ?? '';
-          print("MyTest :: show button ${state.showRestaurantButton}");
         }
         return Form(
           key: _formKey,

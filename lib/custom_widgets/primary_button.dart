@@ -11,6 +11,8 @@ class PrimaryButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.isDisabled = false,
+    this.bgColor,
+    this.textColor,
   }) : super(key: key);
 
   final IconData? icon;
@@ -19,6 +21,8 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
   final bool isDisabled;
+  final Color? bgColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +33,11 @@ class PrimaryButton extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(12),
               ),
-              color: AppColors.primaryLight,
+              color: bgColor ?? AppColors.primaryLight,
             ),
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -41,7 +45,7 @@ class PrimaryButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (isLoading)
-                  // Use a fixed size for the loader
+                    // Use a fixed size for the loader
                     SizedBox(
                       width: 24, // Set width for loader
                       height: 24, // Set height for loader
@@ -51,9 +55,9 @@ class PrimaryButton extends StatelessWidget {
                     Center(
                       child: Text(
                         label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: FontSize.title,
-                          color: AppColors.accent,
+                          color: textColor ?? AppColors.accent,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -73,4 +77,3 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
-
