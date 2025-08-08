@@ -2,13 +2,16 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:resturant_management/di/di_initializer.dart';
 import 'package:resturant_management/modules/admin_onboarding/models/user_onboard_request_model.dart';
+import 'package:resturant_management/modules/dashboard/models/master_data_model.dart';
 import 'package:resturant_management/modules/restaurant_associate_onboard/model/restaurant_associate_response_model.dart';
 import 'package:resturant_management/modules/restaurant_associate_onboard/webservices/restaurant_associate_onboard_repository.dart';
+import 'package:resturant_management/storage/app_shared_preferences.dart';
 import 'package:resturant_management/utils/string_utils.dart';
 
 part 'restaurant_associate_onboard_event.dart';
+
 part 'restaurant_associate_onboard_state.dart';
 
 class RestaurantAssociateOnboardBloc extends Bloc<
@@ -20,6 +23,7 @@ class RestaurantAssociateOnboardBloc extends Bloc<
     required this.repository,
     required this.businessId,
   }) : super(ContentState(showButton: false)) {
+    on<FetchAssociateOnboardInitialData>(_onFetchInitialData);
     on<NameInput>(_onNameInput);
     on<PasswordInput>(_onPasswordInput);
     on<FirstNameInput>(_onFirstNameInput);
@@ -65,9 +69,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onNameInput(
-      NameInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    NameInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _name = event.Name;
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -75,9 +79,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onPasswordInput(
-      PasswordInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    PasswordInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _password = event.password;
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -85,9 +89,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onFirstNameInput(
-      FirstNameInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    FirstNameInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _firstName = event.firstName;
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -95,9 +99,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onLastNameInput(
-      LastNameInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    LastNameInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _lastName = event.lastName;
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -105,9 +109,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onMobileInput(
-      MobileInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    MobileInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _mobile = event.mobile;
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -115,9 +119,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onGenderInput(
-      GenderInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    GenderInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _gender = event.gender;
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -125,9 +129,9 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onDateOfBirthInput(
-      DateOfBirthInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    DateOfBirthInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _dob = convertDateFormat(event.dob);
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
@@ -135,22 +139,23 @@ class RestaurantAssociateOnboardBloc extends Bloc<
   }
 
   void _onRoleInput(
-      RoleInput event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) {
+    RoleInput event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) {
     _role = event.role;
+    print("MyTEst :: is Valid? ${_isDetailsValid()}");
     emit((state as ContentState).copyWith(
       showButton: _isDetailsValid(),
     ));
   }
 
   FutureOr<void> _submitDetails(
-      SubmitDetails event,
-      Emitter<RestaurantAssociateOnboardState> emit,
-      ) async {
+    SubmitDetails event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) async {
     try {
       final UserOnboardRequestModel createRequestModel =
-      UserOnboardRequestModel(
+          UserOnboardRequestModel(
         userName: _name ?? '',
         password: _password ?? '',
         firstName: _firstName ?? '',
@@ -158,7 +163,8 @@ class RestaurantAssociateOnboardBloc extends Bloc<
         mobileNumber: int.parse(_mobile ?? ''),
         gender: _gender ?? '',
         dateOfBirth: _dob ?? '',
-        roles: [_role ?? ''], // Use selected role
+        roles: [_role ?? ''],
+        // Use selected role
         businessType: 'RESTAURANT',
         businessId: businessId,
       );
@@ -168,7 +174,23 @@ class RestaurantAssociateOnboardBloc extends Bloc<
 
       emit(DetailsSubmittedState(message: response?.message));
     } catch (e) {
-     debugPrint("Error creating restaurant associate: $e");
+      debugPrint("Error creating restaurant associate: $e");
     }
+  }
+
+  Future<void> _onFetchInitialData(
+    FetchAssociateOnboardInitialData event,
+    Emitter<RestaurantAssociateOnboardState> emit,
+  ) async {
+    try {
+      final Preferences prefs = AppDI.inject<Preferences>();
+      MasterDataModel? masterDataPrefs = await prefs.getMasterDataModel();
+      List<String> roles = masterDataPrefs?.roles ?? [];
+      // Filter roles that start with 'RESTAURANT'
+      List<String> restaurantRoles =
+          roles.where((role) => role.startsWith('RESTAURANT')).toList();
+      emit(RolesFetchedState(roles: restaurantRoles));
+      emit(ContentState(showButton: false));
+    } catch (e) {}
   }
 }

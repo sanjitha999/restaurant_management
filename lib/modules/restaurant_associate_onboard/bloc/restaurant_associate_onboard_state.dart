@@ -23,3 +23,9 @@ class DetailsSubmittedState extends RestaurantAssociateOnboardState {
   DetailsSubmittedState({this.message});
 }
 
+class RolesFetchedState extends RestaurantAssociateOnboardState {
+  final List<String> roles;
+
+  RolesFetchedState({required this.roles});
+}
+

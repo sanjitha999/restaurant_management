@@ -26,23 +26,30 @@ class RestaurantAssociatesScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is RestaurantAssociatesDisplayState) {
             if (state.associatesList.isNotEmpty) {
-              return ListView.builder(
-                itemCount: state.associatesList.length,
-                itemBuilder: (context, index) {
-                  final user = state.associatesList[index];
-                  return BusinessUserTile(
-                    user: user,
-                    onTap: () {
-                      //Push details screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserDetailsScreen(user: user),
-                        ),
-                      );
-                    },
-                  );
+              return RefreshIndicator(
+                onRefresh: () async {
+                  BlocProvider.of<RestaurantAssociatesBloc>(context)
+                      .add(FetchAssociatesEvent());
+                  await Future.delayed(const Duration(seconds: 2));
                 },
+                child: ListView.builder(
+                  itemCount: state.associatesList.length,
+                  itemBuilder: (context, index) {
+                    final user = state.associatesList[index];
+                    return BusinessUserTile(
+                      user: user,
+                      onTap: () {
+                        //Push details screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserDetailsScreen(user: user),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               );
             } else {
               return const Center(

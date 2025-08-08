@@ -3,6 +3,8 @@ part of 'restaurant_associate_onboard_bloc.dart';
 @immutable
 abstract class RestaurantAssociateOnboardEvent {}
 
+class FetchAssociateOnboardInitialData extends RestaurantAssociateOnboardEvent {}
+
 class NameInput extends RestaurantAssociateOnboardEvent {
   final String Name;
 

@@ -103,7 +103,7 @@ Route _restaurantAssociatesRoute(RouteSettings settings) {
       create: (context) => RestaurantAssociateOnboardBloc(
         repository: AppDI.inject<RestaurantAssociateOnboardRepository>(),
         businessId: businessId,
-      ),
+      )..add(FetchAssociateOnboardInitialData()),
       child: const RestaurantAssociateOnboardScreen(),
     ),
   );

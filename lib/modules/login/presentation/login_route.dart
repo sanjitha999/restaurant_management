@@ -17,6 +17,7 @@ class LoginRoute extends StatelessWidget {
             decoration: const BoxDecoration(
               color: AppColors.primaryLight,
             ),
+            child: Image(image: image),
           ),
           const Center(
             child: LoginCardWidget(),

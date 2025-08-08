@@ -52,6 +52,8 @@ class _RestaurantAssociateOnboardFormState
           SizedBoxSpacing.height24,
           _buildDateOfBirthField(),
           SizedBoxSpacing.height24,
+          _buildRoleDropdown(),
+          SizedBoxSpacing.height24,
         ],
       ),
     );
@@ -139,43 +141,54 @@ class _RestaurantAssociateOnboardFormState
   }
 
   Widget _buildRoleDropdown() {
-    final roles = ['Restaurant Manager', 'Restaurant Owner'];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          Strings.of(context).role,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        SizedBoxSpacing.height8,
-        DropdownButtonFormField<String>(
-          value: _selectedRole,
-          items: roles.map((role) {
-            return DropdownMenuItem<String>(
-              value: role,
-              child: Text(role),
-            );
-          }).toList(),
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: Strings.of(context).selectRole,
-          ),
-          onChanged: (role) {
-            setState(() {
-              _selectedRole = role;
-            });
-            BlocProvider.of<RestaurantAssociateOnboardBloc>(context)
-                .add(RoleInput(role: role!));
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return Strings.of(context)
-                  .roleRequired; // Add this key to intl file
-            }
-            return null;
-          },
-        ),
-      ],
+    // final roles = ['Restaurant Manager', 'Restaurant Owner'];
+    return BlocBuilder<RestaurantAssociateOnboardBloc,
+        RestaurantAssociateOnboardState>(
+      buildWhen: (previous, current) => current is RolesFetchedState,
+      builder: (context, state) {
+        if (state is RolesFetchedState) {
+          var roles = state.roles;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Strings.of(context).role,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              SizedBoxSpacing.height8,
+              DropdownButtonFormField<String>(
+                value: _selectedRole,
+                items: roles.map((role) {
+                  return DropdownMenuItem<String>(
+                    value: role,
+                    child: Text(role),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: Strings.of(context).selectRole,
+                ),
+                onChanged: (role) {
+                  setState(() {
+                    _selectedRole = role;
+                  });
+                  BlocProvider.of<RestaurantAssociateOnboardBloc>(context)
+                      .add(RoleInput(role: role!));
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return Strings.of(context)
+                        .roleRequired; // Add this key to intl file
+                  }
+                  return null;
+                },
+              ),
+            ],
+          );
+        } else {
+          return SizedBox.shrink();
+        }
+      },
     );
   }
 
